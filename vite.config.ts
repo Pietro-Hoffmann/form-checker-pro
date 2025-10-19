@@ -26,20 +26,8 @@ export default defineConfig(({ mode }) => ({
     viteStaticCopy({
       targets: [
         {
-          src: "node_modules/@mediapipe/pose/pose_solution_packed.js",
-          dest: "mediapipe",
-        },
-        {
-          src: "node_modules/@mediapipe/pose/pose_solution_simd_packed.js",
-          dest: "mediapipe",
-        },
-        {
-          src: "node_modules/@mediapipe/pose/pose.binarypb",
-          dest: "mediapipe",
-        },
-        {
-          src: "node_modules/@mediapipe/pose/pose_web.binarypb",
-          dest: "mediapipe",
+          src: "node_modules/@mediapipe/pose/*.{tflite,data,js,wasm,binarypb}",
+          dest: "mediapipe/pose",
         },
       ],
     }),

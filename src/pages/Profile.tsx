@@ -2,8 +2,22 @@ import { BottomNav } from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { User, Trophy, Settings, Dumbbell, Bell, Shield, HelpCircle, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 const Profile = () => {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (data) {
+        setUser(data.user);
+      }
+    };
+
+    fetchUser();
+  }, []);
   const stats = [
     { label: "Treinos", value: "47" },
     { label: "Pontuação Total", value: "86%" },
@@ -32,7 +46,7 @@ const Profile = () => {
             <User className="w-10 h-10 text-primary" />
           </div>
           <div className="text-center">
-            <h1 className="text-2xl font-bold">John Doe</h1>
+            <h1 className="text-2xl font-bold">{user ? user.user_metadata.full_name : 'Carregando...'}</h1>
             <p className="text-sm text-muted-foreground">Entusiasta Fitness</p>
           </div>
         </div>

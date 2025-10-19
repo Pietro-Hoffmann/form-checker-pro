@@ -1,10 +1,22 @@
 import { Button } from "@/components/ui/button";
 import { BottomNav } from "@/components/BottomNav";
-import { ArrowLeft, CheckCircle, AlertCircle, Info } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowLeft, CheckCircle, AlertCircle, Info, Download } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Analysis = () => {
+  const location = useLocation();
+  const { exercise = "Flexões", processedVideoUrl, originalVideoUrl } = location.state || {};
   const score = 92;
+
+  const handleDownload = () => {
+    if (!processedVideoUrl) return;
+    const a = document.createElement('a');
+    a.href = processedVideoUrl;
+    a.download = `${exercise}_processado.webm`;
+    a.click();
+  };
+
   const feedbackItems = [
     {
       type: "success",
@@ -71,9 +83,46 @@ const Analysis = () => {
           
           <div className="text-center">
             <h2 className="text-xl font-bold mb-1">Excelente Execução</h2>
-            <p className="text-sm text-muted-foreground">Flexões - 15 reps analisadas</p>
+            <p className="text-sm text-muted-foreground">{exercise} - Análise completa</p>
           </div>
         </div>
+
+        {/* Video Comparison */}
+        {processedVideoUrl && (
+          <div className="bg-card rounded-xl p-4 border border-border">
+            <Tabs defaultValue="processed" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-4">
+                <TabsTrigger value="processed">Vídeo Processado</TabsTrigger>
+                <TabsTrigger value="original">Vídeo Original</TabsTrigger>
+              </TabsList>
+              <TabsContent value="processed" className="mt-0">
+                <video
+                  src={processedVideoUrl}
+                  controls
+                  className="w-full rounded-lg"
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full mt-3"
+                  onClick={handleDownload}
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Baixar Vídeo Processado
+                </Button>
+              </TabsContent>
+              {originalVideoUrl && (
+                <TabsContent value="original" className="mt-0">
+                  <video
+                    src={originalVideoUrl}
+                    controls
+                    className="w-full rounded-lg"
+                  />
+                </TabsContent>
+              )}
+            </Tabs>
+          </div>
+        )}
 
         {/* Detailed Feedback */}
         <div>

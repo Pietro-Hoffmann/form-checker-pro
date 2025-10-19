@@ -33,7 +33,7 @@ export const usePoseEstimator = () => {
       // Initialize MediaPipe Pose
       const pose = new Pose({
         locateFile: (file) => {
-          return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
+          return `/mediapipe/${file}`;
         }
       });
 

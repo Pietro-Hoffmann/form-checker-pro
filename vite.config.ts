@@ -26,8 +26,8 @@ export default defineConfig(({ mode }) => ({
     viteStaticCopy({
       targets: [
         {
-          src: "node_modules/@mediapipe/pose/*.{tflite,data,js,wasm,binarypb}",
-          dest: "mediapipe/pose",
+          src: "node_modules/@mediapipe/tasks-vision/wasm/*",
+          dest: "wasm",
         },
       ],
     }),
@@ -38,6 +38,6 @@ export default defineConfig(({ mode }) => ({
     },
   },
   optimizeDeps: {
-    include: ['@mediapipe/pose'],
+    include: ['@mediapipe/tasks-vision'],
   },
 }));

@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Pose, POSE_CONNECTIONS } from '@mediapipe/pose';
+import * as mediapipePose from '@mediapipe/pose';
 import { drawConnectors, drawLandmarks } from '@mediapipe/drawing_utils';
 
 export const usePoseEstimator = () => {
@@ -31,7 +31,7 @@ export const usePoseEstimator = () => {
       const ctx = canvas.getContext('2d')!;
 
       // Initialize MediaPipe Pose
-      const pose = new Pose({
+      const pose = new mediapipePose.Pose({
         locateFile: (file) => {
           return `/mediapipe/pose/${file}`;
         }
@@ -80,7 +80,7 @@ export const usePoseEstimator = () => {
 
         if (results.poseLandmarks) {
           // Draw pose landmarks
-          drawConnectors(ctx, results.poseLandmarks, POSE_CONNECTIONS, {
+          drawConnectors(ctx, results.poseLandmarks, mediapipePose.POSE_CONNECTIONS, {
             color: '#00FF00',
             lineWidth: 4
           });

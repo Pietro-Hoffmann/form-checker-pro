@@ -28,13 +28,14 @@ const Signup = () => {
           emailRedirectTo: `${window.location.origin}/dashboard`,
           data: {
             full_name: fullName,
+            date_nascimento: dateOfBirth,
           }
         }
       });
 
       if (authError) throw authError;
 
-      if (authData.user) {
+      if (authData.session && authData.user) {
         const { error: profileError } = await supabase
           .from('profiles')
           .insert({
@@ -50,6 +51,12 @@ const Signup = () => {
         });
         
         setTimeout(() => navigate("/dashboard"), 1000);
+      } else {
+        toast({
+          title: "Confirme seu e-mail",
+          description: "Enviamos um link de confirmação. Após confirmar, faça login para concluir.",
+        });
+        navigate("/login");
       }
     } catch (error: any) {
       toast({

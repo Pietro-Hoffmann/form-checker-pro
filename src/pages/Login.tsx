@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import logoIcon from "@/assets/logo-icon.png";
+import { supabase } from "@/lib/supabase";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -14,14 +15,30 @@ const Login = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement authentication with Supabase
-    toast({
-      title: "Login simulado",
-      description: "Redirecionando para o dashboard...",
-    });
-    setTimeout(() => navigate("/dashboard"), 1000);
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Login realizado!",
+        description: "Redirecionando para o dashboard...",
+      });
+      
+      setTimeout(() => navigate("/dashboard"), 1000);
+    } catch (error: any) {
+      toast({
+        title: "Erro ao fazer login",
+        description: error.message || "Verifique suas credenciais.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -90,9 +107,11 @@ const Login = () => {
               Login
             </Button>
 
-            <Button type="button" variant="secondary" size="lg" className="w-full">
-              Sign Up
-            </Button>
+            <Link to="/signup" className="w-full">
+              <Button type="button" variant="secondary" size="lg" className="w-full">
+                Sign Up
+              </Button>
+            </Link>
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">

@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import logoIcon from "@/assets/logo-icon.png";
+import { supabase } from "@/lib/supabase";
 
 const Signup = () => {
   const [fullName, setFullName] = useState("");
@@ -16,14 +17,47 @@ const Signup = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement authentication with Supabase
-    toast({
-      title: "Conta criada!",
-      description: "Redirecionando para o dashboard...",
-    });
-    setTimeout(() => navigate("/dashboard"), 1000);
+
+    try {
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/dashboard`,
+          data: {
+            full_name: fullName,
+          }
+        }
+      });
+
+      if (authError) throw authError;
+
+      if (authData.user) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: authData.user.id,
+            data_nascimento: dateOfBirth,
+          });
+
+        if (profileError) throw profileError;
+
+        toast({
+          title: "Conta criada!",
+          description: "Redirecionando para o dashboard...",
+        });
+        
+        setTimeout(() => navigate("/dashboard"), 1000);
+      }
+    } catch (error: any) {
+      toast({
+        title: "Erro ao criar conta",
+        description: error.message || "Tente novamente mais tarde.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (

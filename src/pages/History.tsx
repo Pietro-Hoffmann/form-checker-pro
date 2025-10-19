@@ -3,19 +3,15 @@ import { BottomNav } from "@/components/BottomNav";
 import { Flame, TrendingUp, Clock, Calendar } from "lucide-react";
 import { StatCard } from "@/components/StatCard";
 import { cn } from "@/lib/utils";
+import { useExerciseHistory } from "@/hooks/useExerciseHistory";
 
 const filters = ["Todos", "Essa semana", "Esse mês"];
 
-const exercises = [
-  { name: "Flexões", accuracy: 92, reps: 15, date: "Hoje 14:30" },
-  { name: "Agachamento", accuracy: 78, reps: 20, date: "Ontem" },
-  { name: "Afundo", accuracy: 95, reps: 10, date: "Ontem 13:00" },
-  { name: "Prancha", accuracy: 88, reps: 1, date: "Hoje 14:45" },
-  { name: "Flexões", accuracy: 85, reps: 12, date: "2 dias atrás 19:15" },
-];
-
 const History = () => {
   const [activeFilter, setActiveFilter] = useState("Todos");
+  const { history } = useExerciseHistory();
+  
+  const exercises = history.length > 0 ? history : [];
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -66,30 +62,37 @@ const History = () => {
 
       {/* Exercise List */}
       <div className="px-6 py-6 space-y-3">
-        {exercises.map((exercise, index) => (
-          <div
-            key={index}
-            className="bg-card rounded-xl p-4 border border-border hover:border-primary/50 transition-smooth cursor-pointer"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <div>
-                <h3 className="font-semibold">{exercise.name}</h3>
-                <p className="text-xs text-muted-foreground">{exercise.date}</p>
-              </div>
-              <div className="text-right">
-                <span className={cn(
-                  "text-2xl font-bold",
-                  exercise.accuracy >= 90 ? "text-success" : 
-                  exercise.accuracy >= 80 ? "text-warning" : 
-                  "text-destructive"
-                )}>
-                  {exercise.accuracy}%
-                </span>
-                <p className="text-xs text-muted-foreground">{exercise.reps} reps</p>
+        {exercises.length > 0 ? (
+          exercises.map((exercise) => (
+            <div
+              key={exercise.id}
+              className="bg-card rounded-xl p-4 border border-border hover:border-primary/50 transition-smooth cursor-pointer"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <h3 className="font-semibold">{exercise.name}</h3>
+                  <p className="text-xs text-muted-foreground">{exercise.date}</p>
+                </div>
+                <div className="text-right">
+                  <span className={cn(
+                    "text-2xl font-bold",
+                    exercise.accuracy >= 90 ? "text-success" : 
+                    exercise.accuracy >= 80 ? "text-warning" : 
+                    "text-destructive"
+                  )}>
+                    {exercise.accuracy}%
+                  </span>
+                  {exercise.reps && <p className="text-xs text-muted-foreground">{exercise.reps} reps</p>}
+                </div>
               </div>
             </div>
+          ))
+        ) : (
+          <div className="text-center py-8 text-muted-foreground">
+            <p>Nenhum exercício no histórico</p>
+            <p className="text-sm mt-1">Comece gravando e salvando seus exercícios!</p>
           </div>
-        ))}
+        )}
       </div>
 
       <BottomNav />

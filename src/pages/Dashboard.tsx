@@ -4,12 +4,11 @@ import { StatCard } from "@/components/StatCard";
 import { Flame, Dumbbell, TrendingUp, Camera, CheckCircle, AlertCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import logoIcon from "@/assets/logo-icon.png";
+import { useExerciseHistory } from "@/hooks/useExerciseHistory";
 
 const Dashboard = () => {
-  const recentAnalyses = [
-    { name: "Flexões", accuracy: 92, issues: 1, time: "2 horas atrás" },
-    { name: "Agachamento", accuracy: 78, issues: 3, time: "Ontem" },
-  ];
+  const { getRecentAnalyses } = useExerciseHistory();
+  const recentAnalyses = getRecentAnalyses(2);
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -53,30 +52,37 @@ const Dashboard = () => {
           </div>
 
           <div className="space-y-3">
-            {recentAnalyses.map((analysis, index) => (
-              <div
-                key={index}
-                className="bg-card rounded-xl p-4 border border-border hover:border-primary/50 transition-smooth cursor-pointer"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-semibold">{analysis.name}</h3>
-                  <span className="text-2xl font-bold text-success">{analysis.accuracy}%</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-4">
-                    <span className="flex items-center gap-1 text-muted-foreground">
-                      <CheckCircle className="w-4 h-4 text-success" />
-                      {analysis.accuracy}% accuracy
-                    </span>
-                    <span className="flex items-center gap-1 text-warning">
-                      <AlertCircle className="w-4 h-4" />
-                      {analysis.issues} issues
-                    </span>
+            {recentAnalyses.length > 0 ? (
+              recentAnalyses.map((analysis) => (
+                <div
+                  key={analysis.id}
+                  className="bg-card rounded-xl p-4 border border-border hover:border-primary/50 transition-smooth cursor-pointer"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-semibold">{analysis.name}</h3>
+                    <span className="text-2xl font-bold text-success">{analysis.accuracy}%</span>
                   </div>
-                  <span className="text-muted-foreground">{analysis.time}</span>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-4">
+                      <span className="flex items-center gap-1 text-muted-foreground">
+                        <CheckCircle className="w-4 h-4 text-success" />
+                        {analysis.accuracy}% accuracy
+                      </span>
+                      <span className="flex items-center gap-1 text-warning">
+                        <AlertCircle className="w-4 h-4" />
+                        {analysis.issues} issues
+                      </span>
+                    </div>
+                    <span className="text-muted-foreground">{analysis.date}</span>
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>Nenhuma análise recente</p>
+                <p className="text-sm mt-1">Comece gravando um exercício!</p>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>

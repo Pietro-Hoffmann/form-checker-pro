@@ -1,11 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { BottomNav } from "@/components/BottomNav";
 import { ArrowLeft, CheckCircle, AlertCircle, Info, Download } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useExerciseHistory } from "@/hooks/useExerciseHistory";
+import { toast } from "sonner";
 
 const Analysis = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { addExercise } = useExerciseHistory();
   const { exercise = "Flexões", processedVideoUrl, originalVideoUrl } = location.state || {};
   const score = 92;
 
@@ -15,6 +19,24 @@ const Analysis = () => {
     a.href = processedVideoUrl;
     a.download = `${exercise}_processado.webm`;
     a.click();
+  };
+
+  const handleSaveToHistory = () => {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const dateString = `Hoje ${timeString}`;
+    
+    const issues = feedbackItems.filter(item => item.type === "warning").length;
+
+    addExercise({
+      name: exercise,
+      accuracy: score,
+      issues,
+      date: dateString,
+    });
+
+    toast.success("Exercício salvo no histórico!");
+    setTimeout(() => navigate("/dashboard"), 1500);
   };
 
   const feedbackItems = [
@@ -166,7 +188,7 @@ const Analysis = () => {
               Tente outro exercício
             </Button>
           </Link>
-          <Button variant="secondary" size="lg" className="w-full">
+          <Button variant="secondary" size="lg" className="w-full" onClick={handleSaveToHistory}>
             Salvar no histórico
           </Button>
         </div>

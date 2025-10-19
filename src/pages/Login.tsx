@@ -98,7 +98,7 @@ const Login = () => {
             </div>
 
             <div className="text-right">
-              <Link to="#" className="text-sm text-primary hover:underline">
+              <Link to="/forgot-password" className="text-sm text-primary hover:underline">
                 Esqueceu a senha?
               </Link>
             </div>
